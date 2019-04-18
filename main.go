@@ -2,6 +2,7 @@ package main
 
 import (
   "./Utils"
+  "fmt"
   "github.com/golang/freetype/truetype"
   "github.com/hajimehoshi/ebiten"
   "image/color"
@@ -14,7 +15,9 @@ const (
   SCALE = 2
 )
 
-var (Temp = "none")
+var (
+  Temp = "none"
+)
 
 var (
   ButtonManager = Utils.NewButtonManager(WIDTH, HEIGHT)
@@ -54,9 +57,11 @@ func main() {
       Temp = "Tap"
     } else
     if state == Utils.Hold {
-      b.Changed = true
       b.ImgOpt.ColorM.RotateHue(0.1)
-      Temp = "Hold"
+      Temp = fmt.Sprintln(float64(TouchManager.Dx), float64(TouchManager.Dy))
+
+      x, y := b.GetPosition()
+      b.SetPosition(x + float64(TouchManager.Dx), y + float64(TouchManager.Dy))
     }
   })
 

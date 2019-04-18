@@ -19,14 +19,16 @@ func NewButtonManager(width, height int) *ButtonManager {
 }
 
 func (b *ButtonManager) updateScreen() {
+	if err := b.ButtonScreen.Clear(); err != nil {
+		log.Fatal(err)
+	}
+
 	for _, button := range b.buttons {
-		if button.Changed {
-			button.Draw(b.ButtonScreen)
-		}
+		button.Draw(b.ButtonScreen)
 	}
 }
 
-func (b *ButtonManager) AddButton(x, y, width, height int, imgPath string, function func(*Button, int)){
+func (b *ButtonManager) AddButton(x, y, width, height float64, imgPath string, function func(*Button, int)){
 	img, err := ebiten.NewImageFromImage(OpenImage(imgPath), ebiten.FilterLinear)
 	if err != nil {
 		log.Fatal(err)
@@ -40,7 +42,6 @@ func (b *ButtonManager) AddButton(x, y, width, height int, imgPath string, funct
 		y,
 		width,
 		height,
-		true,
 	})
 
 	b.updateScreen()
@@ -48,7 +49,7 @@ func (b *ButtonManager) AddButton(x, y, width, height int, imgPath string, funct
 
 func (b *ButtonManager) CheckForPress(x, y, state int) {
 	for _, button := range b.buttons {
-		if state != None && button.IsPressed(x, y){
+		if state != None && button.IsPressed(float64(x), float64(y)){
 			button.RunFunc(state)
 			break
 		}

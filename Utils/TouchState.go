@@ -14,11 +14,16 @@ const (
 type TouchManager struct {
 	state int
 	tappedOn time.Time
+	//Delta x, y between last and current frame
+	Dx, Dy int
+	ox, oy int
 }
 
 func NewTouchManager() TouchManager {
 	return TouchManager{
 		state: None,
+		ox: 0,
+		oy: 0,
 	}
 }
 
@@ -28,12 +33,17 @@ func (t *TouchManager) GetTouchPosition(id int) (int, int, int) {
 		if t.state == None {
 			t.state = Tap
 			t.tappedOn = time.Now()
-		} else if time.Now().After(t.tappedOn.Add(time.Millisecond * 400)) {
+		} else if time.Now().After(t.tappedOn.Add(time.Millisecond * 200)) {
 			t.state = Hold
 		}
 	} else {
 		t.state = None
 	}
+
+	t.Dx = x - t.ox
+	t.Dy = y - t.oy
+
+	t.ox, t.oy = x, y
 
 	return x, y, t.state
 }
