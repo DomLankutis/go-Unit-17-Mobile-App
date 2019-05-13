@@ -5,6 +5,7 @@ import (
   "fmt"
   "github.com/golang/freetype/truetype"
   "github.com/hajimehoshi/ebiten"
+  "github.com/hajimehoshi/ebiten/ebitenutil"
   "image/color"
   "log"
   "math/rand"
@@ -174,6 +175,23 @@ func updateButtons() {
   }
 }
 
+func RenderQuestionsList(screen *ebiten.Image) {
+  colour := color.RGBA{}
+
+
+
+  for i := 0; i < len(QuestionsAnswered); i++ {
+    if !QuestionsAnswered[i] {
+      colour = color.RGBA{0, 255, 0, 255}
+    } else {
+      colour = color.RGBA{255, 0, 0, 255}
+    }
+
+    ebitenutil.DrawRect(screen, float64(i * 15) + 5 , 10, 10, 10, colour)
+
+  }
+}
+
 func update(screen *ebiten.Image) error {
 
   if err := screen.DrawImage(ButtonManager.ButtonScreen, &ebiten.DrawImageOptions{}); err != nil {
@@ -237,6 +255,8 @@ func main() {
     }
 
     message := fmt.Sprint(firstNum, getSymbol(operation), secondNum)
+
+    RenderQuestionsList(screen)
 
     TextManager.RenderTextTo("main", message, WIDTH/3, HEIGHT/2, color.RGBA{255, 255, 255, 255}, screen)
 
