@@ -33,7 +33,7 @@ func (t *TouchManager) GetTouchPosition(id int) (int, int, int) {
 		if t.state == None {
 			t.state = Tap
 			t.tappedOn = time.Now()
-		} else if time.Now().After(t.tappedOn.Add(time.Millisecond * 200)) {
+		} else {
 			t.state = Hold
 		}
 	} else {

@@ -12,12 +12,15 @@ import (
 
 
 type TextManager struct {
-	fonts map[string]font.Face
+	fonts           map[string]font.Face
+	StaticTextImage *ebiten.Image
 }
 
-func NewTextManager() TextManager{
+func NewTextManager(w, h int) TextManager{
+	i, _ := ebiten.NewImage(w, h, ebiten.FilterNearest)
 	return TextManager{
 		map[string]font.Face{},
+		i,
 	}
 }
 
@@ -40,4 +43,12 @@ func (f *TextManager) AddFont(path, name string, options truetype.Options) {
 
 func (f *TextManager) RenderTextTo(fontName, message string, x, y int, color color.RGBA, screen *ebiten.Image) {
 	text.Draw(screen, message, f.fonts[fontName], x, y, color)
+}
+
+func (f *TextManager) ClearStaticText() {
+	f.StaticTextImage.Clear()
+}
+
+func (f *TextManager) RenderStaticText(screen *ebiten.Image) {
+	screen.DrawImage(f.StaticTextImage, &ebiten.DrawImageOptions{})
 }

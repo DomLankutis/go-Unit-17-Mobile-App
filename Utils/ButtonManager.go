@@ -6,14 +6,14 @@ import (
 )
 
 type ButtonManager struct {
-	buttons []*Button
+	buttons map[string]*Button
 	ButtonScreen *ebiten.Image
 }
 
 func NewButtonManager(width, height int) *ButtonManager {
 	buttonScreen, _ :=  ebiten.NewImage(width, height, ebiten.FilterLinear)
 	return &ButtonManager{
-		nil,
+		map[string]*Button{},
 		buttonScreen,
 	}
 }
@@ -28,13 +28,18 @@ func (b *ButtonManager) updateScreen() {
 	}
 }
 
-func (b *ButtonManager) AddButton(x, y, width, height float64, imgPath string, function func(*Button, int)){
-	img, err := ebiten.NewImageFromImage(OpenImage(imgPath), ebiten.FilterLinear)
-	if err != nil {
-		log.Fatal(err)
+func (b *ButtonManager) AddButton(name string, x, y, width, height float64, imgPath string, function func(*Button, int)){
+	img, _ := ebiten.NewImage(int(width), int(height), ebiten.FilterLinear)
+	if imgPath != "nil" {
+		var err error
+		img, err = ebiten.NewImageFromImage(OpenImage(imgPath), ebiten.FilterLinear)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
-	b.buttons = append(b.buttons, &Button{
+
+	b.buttons[name] = &Button{
 		img,
 		ebiten.DrawImageOptions{},
 		function,
@@ -42,17 +47,30 @@ func (b *ButtonManager) AddButton(x, y, width, height float64, imgPath string, f
 		y,
 		width,
 		height,
-	})
+	}
 
 	b.updateScreen()
 }
 
-func (b *ButtonManager) CheckForPress(x, y, state int) {
+func (b *ButtonManager) GetButton(name string) *Button {
+	if b.buttons[name] != nil {
+		return b.buttons[name]
+	} else {
+		log.Fatal("ButtonManager: No button under name '", name, "' exists")
+		return &Button{}
+	}
+}
+
+func (b *ButtonManager) CheckForPress(x, y, state int) bool{
+	var isPressed bool
 	for _, button := range b.buttons {
 		if state != None && button.IsPressed(float64(x), float64(y)){
+			isPressed = true
 			button.RunFunc(state)
 			break
 		}
 	}
 	b.updateScreen()
+
+	return isPressed
 }
