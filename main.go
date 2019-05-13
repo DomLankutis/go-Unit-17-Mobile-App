@@ -174,30 +174,6 @@ func updateButtons() {
   }
 }
 
-func LevelFlowControl() {
-  if answered {
-    firstNum, secondNum, operation, answer = generateQuestion(10)
-    QuestionsAnswered = append(QuestionsAnswered, true)
-    updateButtons()
-    answered = false
-    tries = 0
-  }
-
-  if tries >= 3 {
-    firstNum, secondNum, operation, answer = generateQuestion(10)
-    QuestionsAnswered = append(QuestionsAnswered, false)
-    updateButtons()
-    answered = false
-    tries = 0
-  }
-
-  if len(QuestionsAnswered) >= 9 {
-    LevelManager.SetLevel("")
-    answered = false
-    tries = 0
-  }
-}
-
 func update(screen *ebiten.Image) error {
 
   if err := screen.DrawImage(ButtonManager.ButtonScreen, &ebiten.DrawImageOptions{}); err != nil {
@@ -233,11 +209,32 @@ func main() {
   })
 
   //Adding music
+  PlayerManager.NewAudioFromPath("annoyed3.wav", "sick")
 
   //Adding question level to level Manager
   LevelManager.AddLevel("Level 0", func(screen *ebiten.Image) {
 
-    LevelFlowControl()
+    if answered {
+      firstNum, secondNum, operation, answer = generateQuestion(10)
+      QuestionsAnswered = append(QuestionsAnswered, true)
+      updateButtons()
+      answered = false
+      tries = 0
+    }
+
+    if tries >= 3 {
+      firstNum, secondNum, operation, answer = generateQuestion(10)
+      QuestionsAnswered = append(QuestionsAnswered, false)
+      updateButtons()
+      answered = false
+      tries = 0
+    }
+
+    if len(QuestionsAnswered) >= 9 {
+      LevelManager.SetLevel("")
+      answered = false
+      tries = 0
+    }
 
     message := fmt.Sprint(firstNum, getSymbol(operation), secondNum)
 
