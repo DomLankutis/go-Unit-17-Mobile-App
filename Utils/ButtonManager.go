@@ -52,6 +52,16 @@ func (b *ButtonManager) AddButton(name string, x, y, width, height float64, imgP
 	b.updateScreen()
 }
 
+func (b *ButtonManager) ClearButtons() {
+	b.buttons = map[string]*Button{}
+}
+
+func (b *ButtonManager) RemoveButton(name string) {
+	if b.buttons[name] != nil {
+		b.buttons[name] = nil
+	}
+}
+
 func (b *ButtonManager) GetButton(name string) *Button {
 	if b.buttons[name] != nil {
 		return b.buttons[name]

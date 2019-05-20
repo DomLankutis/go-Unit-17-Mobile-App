@@ -5,12 +5,14 @@ import (
 )
 
 type LevelManager struct {
+	NewState bool
 	currentLevel string
 	level map[string]func(*ebiten.Image)
 }
 
 func NewLevelManager() LevelManager{
 	return LevelManager{
+		true,
 		"",
 		map[string]func(*ebiten.Image){},
 	}
@@ -22,8 +24,12 @@ func (l *LevelManager) AddLevel(name string, f func(screen *ebiten.Image)) {
 
 func (l *LevelManager) SetLevel(name string) {
 	l.currentLevel = name
+	l.NewState = true
 }
 
 func (l *LevelManager) RunLevel(screen *ebiten.Image) {
 	l.level[l.currentLevel](screen)
+	if l.NewState {
+		l.NewState = false
+	}
 }

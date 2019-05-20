@@ -197,7 +197,43 @@ func RenderQuestionsList(screen *ebiten.Image) {
   }
 }
 
+func mainMenu(screen *ebiten.Image) {
 
+  if LevelManager.NewState {
+    TextManager.RenderTextTo("title", "Maths Challenge", WIDTH/16, HEIGHT/5, QuestionText, TextManager.StaticTextImage)
+
+    ButtonManager.AddButton("ToLevel0", WIDTH*0.12, HEIGHT*0.35, WIDTH*0.75, HEIGHT/10, "nil", func(b *Utils.Button, state int) {
+      if state == Utils.Tap {
+        LevelManager.SetLevel("Level 0")
+        ButtonManager.ClearButtons()
+        TextManager.ClearStaticText()
+      }
+    })
+    ButtonManager.GetButton("ToLevel0").Img.Fill(ButtonBackground)
+    TextManager.RenderTextTo("level selection", "Easy", WIDTH*0.4, HEIGHT*0.4+10, ButtonText, TextManager.StaticTextImage)
+
+    ButtonManager.AddButton("ToLevel1", WIDTH*0.12, HEIGHT*0.5, WIDTH*0.75, HEIGHT/10, "nil", func(b *Utils.Button, state int) {
+      if state == Utils.Tap {
+        LevelManager.SetLevel("Level 1")
+        ButtonManager.ClearButtons()
+        TextManager.ClearStaticText()
+      }
+    })
+    ButtonManager.GetButton("ToLevel1").Img.Fill(ButtonBackground)
+    TextManager.RenderTextTo("level selection", "Medium", WIDTH*0.35, HEIGHT*0.55+10, ButtonText, TextManager.StaticTextImage)
+
+    ButtonManager.AddButton("ToLevel2", WIDTH*0.12, HEIGHT*0.65, WIDTH*0.75, HEIGHT/10, "nil", func(b *Utils.Button, state int) {
+      if state == Utils.Tap {
+        LevelManager.SetLevel("Level 2")
+        ButtonManager.ClearButtons()
+        TextManager.ClearStaticText()
+      }
+    })
+    ButtonManager.GetButton("ToLevel2").Img.Fill(ButtonBackground)
+    TextManager.RenderTextTo("level selection", "Hard", WIDTH*0.4, HEIGHT*0.7+10, ButtonText, TextManager.StaticTextImage)
+
+  }
+}
 
 func update(screen *ebiten.Image) error {
 
@@ -219,26 +255,38 @@ func update(screen *ebiten.Image) error {
 
 func main() {
 
-  LevelManager.SetLevel("Level 0")
+  LevelManager.SetLevel("Main Menu")
 
   // Change the random generator seed so random numbers differ with every launch of the app
   rand.Seed(time.Now().UnixNano())
 
   //Adding fonts
   TextManager.AddFont("Roboto-Regular.ttf", "main", truetype.Options{
-    Size: 24,
-    DPI: 144,
+    Size: 42,
+    DPI: 72,
+  })
+
+  TextManager.AddFont("Roboto-Regular.ttf", "title", truetype.Options{
+    Size: 42,
+    DPI: 72,
   })
 
   TextManager.AddFont("Roboto-Regular.ttf", "answer", truetype.Options{
     Size: 14,
-    DPI: 144,
+    DPI: 72,
+  })
+
+  TextManager.AddFont("Roboto-Regular.ttf", "level selection", truetype.Options{
+    Size: 32,
+    DPI: 72,
   })
 
   //Adding music
   PlayerManager.NewAudioFromPath("annoyed3.wav", "sick")
 
   //Adding question level to level Manager
+  LevelManager.AddLevel("Main Menu", mainMenu)
+
   LevelManager.AddLevel("Level 0", func(screen *ebiten.Image) {
 
     if answered {
