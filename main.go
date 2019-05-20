@@ -31,6 +31,13 @@ const (
 )
 
 var (
+  QuestionText = color.RGBA{0, 0, 0, 255}
+  ButtonText = color.RGBA{0, 0, 0, 255}
+  ButtonBackground = color.RGBA{247,211,186, 255}
+  Background = color.RGBA{245,239,227, 255}
+)
+
+var (
   ButtonManager = Utils.NewButtonManager(WIDTH, HEIGHT)
   TextManager = Utils.NewTextManager(WIDTH, HEIGHT)
   PlayerManager = Utils.NewPlayerManager()
@@ -61,27 +68,26 @@ var (
     o - The arithmetic operation used
 
   Returns a, b, s, and answer
- */
-func generateQuestion(max int64) (a int64, b int64, o, ans int64) {
+*/
+func generateQuestion(max int64) (a, b, o, ans int64) {
   a = rand.Int63n(max)
   b = rand.Int63n(max)
   o = rand.Int63n(4)
+
+  if a < b {
+    a, b = b, a
+  }
 
   switch o {
   case ADD:
     return a, b, o, a + b
   case SUB:
-    if a >= b {
-      return a, b, o, a - b
-    } else {
-      return b, a, o, b - a
-
-    }
+    return a, b, o, a - b
   case DIV:
-    if b != 0 {
+    if float64(a) / float64(b) == float64(a / b) {
       return a, b, o, a / b
     } else {
-      return b, a, o, a / b
+      return generateQuestion(max)
     }
   case MUL:
     return a, b, o, a * b
@@ -147,7 +153,7 @@ func updateButtons() {
     if i == correctButton {
 
       TextManager.RenderTextTo("answer", fmt.Sprint(answer), int(x+BSize/4), int(y+BSize*0.75),
-        color.RGBA{255, 255, 255, 255}, TextManager.StaticTextImage)
+        ButtonText, TextManager.StaticTextImage)
 
       ButtonManager.AddButton(fmt.Sprint(i), x, y, BSize, BSize, "nil",
         func(button *Utils.Button, status int) {
@@ -159,40 +165,43 @@ func updateButtons() {
     } else {
 
       TextManager.RenderTextTo("answer", fmt.Sprint(answer+AnswerVariations[i]), int(x+BSize/4), int(y+BSize*0.75),
-        color.RGBA{255, 255, 255, 255}, TextManager.StaticTextImage)
+        ButtonText, TextManager.StaticTextImage)
 
       ButtonManager.AddButton(fmt.Sprint(i), x, y, BSize, BSize, "nil",
         func(button *Utils.Button, status int) {
           if status == Utils.Tap {
-            button.ImgOpt.ColorM.Reset()
-            button.ImgOpt.ColorM.Translate(255, 0, 0, 255)
+            button.Img.Fill(color.RGBA{255, 0, 0, 255})
             tries++
           }
         })
     }
 
-    ButtonManager.GetButton(fmt.Sprint(i)).ImgOpt.ColorM.Translate(0, 0, 100, 255)
+    ButtonManager.GetButton(fmt.Sprint(i)).Img.Fill(ButtonBackground)
   }
 }
 
 func RenderQuestionsList(screen *ebiten.Image) {
   colour := color.RGBA{}
 
-
-
   for i := 0; i < len(QuestionsAnswered); i++ {
-    if !QuestionsAnswered[i] {
+    if QuestionsAnswered[i] {
       colour = color.RGBA{0, 255, 0, 255}
     } else {
       colour = color.RGBA{255, 0, 0, 255}
     }
-
+    if i == len(QuestionsAnswered) - 1 {
+      colour = color.RGBA{250, 218, 94, 255}
+    }
     ebitenutil.DrawRect(screen, float64(i * 15) + 5 , 10, 10, 10, colour)
 
   }
 }
 
+
+
 func update(screen *ebiten.Image) error {
+
+  screen.Fill(Background)
 
   if err := screen.DrawImage(ButtonManager.ButtonScreen, &ebiten.DrawImageOptions{}); err != nil {
     log.Fatal(err)
@@ -258,12 +267,11 @@ func main() {
 
     RenderQuestionsList(screen)
 
-    TextManager.RenderTextTo("main", message, WIDTH/3, HEIGHT/2, color.RGBA{255, 255, 255, 255}, screen)
+    TextManager.RenderTextTo("main", message, WIDTH/3, HEIGHT/2, QuestionText, screen)
 
   })
 
-  err := ebiten.Run(update, WIDTH, HEIGHT, SCALE, "Test")
-  if err != nil {
+  if err := ebiten.Run(update, WIDTH, HEIGHT, SCALE, "Test"); err != nil {
     log.Fatal(err)
   }
 }

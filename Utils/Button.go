@@ -6,8 +6,8 @@ import (
 )
 
 type Button struct {
-	img      *ebiten.Image
-	ImgOpt   ebiten.DrawImageOptions
+	Img      *ebiten.Image
+	imgOpt   ebiten.DrawImageOptions
 	function func (*Button, int)
 	x        float64
 	y        float64
@@ -24,9 +24,9 @@ func (b *Button) SetPosition(x, y float64) {
 }
 
 func (b *Button) Draw(screen *ebiten.Image) {
-	b.ImgOpt.GeoM.SetElement(0, 2, b.x)
-	b.ImgOpt.GeoM.SetElement(1, 2, b.y)
-	if err := screen.DrawImage(b.img, &b.ImgOpt); err != nil {
+	b.imgOpt.GeoM.SetElement(0, 2, b.x)
+	b.imgOpt.GeoM.SetElement(1, 2, b.y)
+	if err := screen.DrawImage(b.Img, &b.imgOpt); err != nil {
 		log.Fatal(err)
 	}
 }
