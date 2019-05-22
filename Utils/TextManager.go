@@ -45,7 +45,7 @@ func (f *TextManager) RenderTextTo(fontName, message string, x, y int, color col
 	var sub int
 	for _, letter := range message {
 		advancement, _ := f.fonts[fontName].GlyphAdvance(letter)
-		sub += int(int(advancement) >> 6)
+		sub += int(advancement >> 6)
 	}
 	text.Draw(screen, message, f.fonts[fontName], x-(sub/2), y, color)
 }
