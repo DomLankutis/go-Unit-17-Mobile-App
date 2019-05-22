@@ -127,7 +127,7 @@ func GenerateVariatonList() []int64 {
     value := n
 
     for _, val := range values {
-      if val == value || value == 0 {
+      if val == value || val == answer || value == 0 {
         canAdd = false
         break
       }
