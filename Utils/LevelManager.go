@@ -28,8 +28,9 @@ func (l *LevelManager) SetLevel(name string) {
 }
 
 func (l *LevelManager) RunLevel(screen *ebiten.Image) {
+	oldState := l.NewState
 	l.level[l.currentLevel](screen)
-	if l.NewState {
+	if oldState {
 		l.NewState = false
 	}
 }
