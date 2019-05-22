@@ -45,6 +45,7 @@ func baseLevelLogic (screen *ebiten.Image, timelimit time.Duration) {
 		LevelManager.SetLevel("end menu")
 		ButtonManager.ClearButtons()
 		TextManager.ClearStaticText()
+		LevelTicker = nil
 		answered = false
 		tries = 0
 	}

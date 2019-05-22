@@ -15,7 +15,7 @@ import (
 const (
   WIDTH = 720
   HEIGHT = 1280
-  SCALE = 1
+  SCALE = 0.5
 )
 
 const (
@@ -205,7 +205,6 @@ func update(screen *ebiten.Image) error {
 	}
 
 	TextManager.RenderStaticText(screen)
-
 	ButtonManager.CheckForPress(TouchManager.GetTouchPosition(0))
 
 	LevelManager.RunLevel(screen)
@@ -240,6 +239,10 @@ func main() {
 	})
 
 	//Adding music/sounds
+	PlayerManager.NewAudioFromPath("Celebration.mp3", "celebration")
+	PlayerManager.NewAudioFromPath("crickets.mp3", "crickets")
+	PlayerManager.NewAudioFromPath("StarDing.wav", "starDing")
+	PlayerManager.NewAudioFromPath("yay!.mp3", "yay")
 
 	//Adding question level to level Manager
 	LevelManager.AddLevel("main menu", menu)
