@@ -3,8 +3,10 @@ package Utils
 import (
 	"github.com/hajimehoshi/ebiten/audio"
 	"github.com/hajimehoshi/ebiten/audio/wav"
+	"github.com/hajimehoshi/ebiten/audio/mp3"
 	"golang.org/x/mobile/asset"
 	"log"
+	"strings"
 )
 
 type PlayerManager struct {
@@ -25,12 +27,25 @@ func NewPlayerManager() PlayerManager {
 
 func (p *PlayerManager) NewAudioFromPath(path, name string) {
 	file, _ := asset.Open(path)
-	decoded, err := wav.Decode(p.audioContext, file)
-	if err != nil {
-		log.Fatal(err)
+	if strings.Contains(path, ".wav") {
+		decoded, err := wav.Decode(p.audioContext, file)
+		if err != nil {
+			log.Fatal(err)
+		}
+		player, _ := audio.NewPlayer(p.audioContext, decoded)
+		p.players[name] = player
+	} else if strings.Contains(path, ".mp3") {
+		decoded, err := mp3.Decode(p.audioContext, file)
+		if err != nil {
+			log.Fatal(err)
+		}
+		player, _ := audio.NewPlayer(p.audioContext, decoded)
+		p.players[name] = player
+	} else {
+		log.Fatal("Can only play mp3 and wav formats")
 	}
-	player, _ := audio.NewPlayer(p.audioContext, decoded)
-	p.players[name] = player
+
+
 }
 
 func (p *PlayerManager) Play(name string) {
