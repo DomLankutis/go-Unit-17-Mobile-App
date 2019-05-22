@@ -15,7 +15,7 @@ import (
 const (
   WIDTH = 720
   HEIGHT = 1280
-  SCALE = 0.5
+  SCALE = 1
 )
 
 const (
