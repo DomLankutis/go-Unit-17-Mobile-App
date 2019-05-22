@@ -37,7 +37,7 @@ func level1 (screen *ebiten.Image) {
 	}
 
 	if len(QuestionsAnswered) >= 9 {
-		LevelManager.SetLevel("")
+		LevelManager.SetLevel("end menu")
 		ButtonManager.ClearButtons()
 		TextManager.ClearStaticText()
 		answered = false

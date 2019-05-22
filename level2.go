@@ -17,7 +17,7 @@ func level2 (screen *ebiten.Image) {
 
 	if LevelManager.NewState {
 		//Reset Ticker
-		Level1Ticker = time.Tick(time.Second * 10)
+		Level2Ticker = time.Tick(time.Second * 10)
 		QuestionsAnswered = []bool{}
 	}
 
@@ -37,11 +37,9 @@ func level2 (screen *ebiten.Image) {
 	}
 
 	if len(QuestionsAnswered) >= 9 {
-		LevelManager.SetLevel("")
+		LevelManager.SetLevel("end menu")
 		ButtonManager.ClearButtons()
 		TextManager.ClearStaticText()
-		answered = false
-		tries = 0
 	}
 
 	message := fmt.Sprint(firstNum, getSymbol(operation), secondNum)

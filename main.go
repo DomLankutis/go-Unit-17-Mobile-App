@@ -224,7 +224,7 @@ func update(screen *ebiten.Image) error {
 
 func main() {
 
-  LevelManager.SetLevel("level 2")
+  LevelManager.SetLevel("main menu")
 
   // Change the random generator seed so random numbers differ with every launch of the app
   rand.Seed(time.Now().UnixNano())
@@ -258,6 +258,7 @@ func main() {
   LevelManager.AddLevel("level 0", level0)
   LevelManager.AddLevel("level 1", level1)
   LevelManager.AddLevel("level 2", level2)
+  LevelManager.AddLevel("end menu", endMenu)
 
   if err := ebiten.Run(update, WIDTH, HEIGHT, SCALE, "Test"); err != nil {
     log.Fatal(err)
