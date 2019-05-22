@@ -13,13 +13,13 @@ import (
 )
 
 const (
-  WIDTH = 360
-  HEIGHT = 640
-  SCALE = 1
+  WIDTH = 720
+  HEIGHT = 1280
+  SCALE = 0.5
 )
 
 const (
-  BSize = 50
+  BSize = 110
   Spacing = BSize * 1.5
 )
 
@@ -74,189 +74,190 @@ var (
   Returns a, b, s, and answer
 */
 func generateQuestion(max int64) (a, b, o, ans int64) {
-  a = rand.Int63n(max)
-  b = rand.Int63n(max)
-  o = rand.Int63n(4)
+	a = rand.Int63n(max)
+	b = rand.Int63n(max)
+	o = rand.Int63n(4)
 
-  if a < b {
-    a, b = b, a
-  }
+	if a < b {
+		a, b = b, a
+	}
 
-  switch o {
-  case ADD:
-    return a, b, o, a + b
-  case SUB:
-    return a, b, o, a - b
-  case DIV:
-    if b != 0 && float64(a)/float64(b) == float64(a/b){
-      return a, b, o, a / b
-    } else {
-      return generateQuestion(max)
-    }
-  case MUL:
-    return a, b, o, a * b
-  default:
-    return 0, 0, 0, 0
-  }
+	switch o {
+	case ADD:
+		return a, b, o, a + b
+	case SUB:
+		return a, b, o, a - b
+	case DIV:
+		if b != 0 && float64(a)/float64(b) == float64(a/b) {
+			return a, b, o, a / b
+		} else {
+			return generateQuestion(max)
+		}
+	case MUL:
+		return a, b, o, a * b
+	default:
+		return 0, 0, 0, 0
+	}
 }
 
 func getSymbol(o int64) string {
-  switch o {
-  case ADD:
-    return " + "
-  case SUB:
-    return " - "
-  case DIV:
-    return " / "
-  case MUL:
-    return " * "
-  default:
-    return " "
-  }
+	switch o {
+	case ADD:
+		return " + "
+	case SUB:
+		return " - "
+	case DIV:
+		return " / "
+	case MUL:
+		return " * "
+	default:
+		return " "
+	}
 }
 
 func GenerateVariationList() []int64 {
 
-  var values []int64
+	var values []int64
 
-  for ; ; {
-    canAdd := true
+	for ; ; {
+		canAdd := true
 
-    n := rand.Int63n(10)
+		n := rand.Int63n(10)
 
-    value := n
+		value := n
 
-    for _, val := range values {
-      if value == answer || value == val ||  value == 0 {
-        canAdd = false
-        break
-      }
-    }
+		for _, val := range values {
+			if value == answer || value == val || value == 0 {
+				canAdd = false
+				break
+			}
+		}
 
-    if canAdd {
-      values = append(values, value)
-    }
+		if canAdd {
+			values = append(values, value)
+		}
 
-    if len(values) >= 7 {
-      return values
-    }
-  }
-
+		if len(values) >= 7 {
+			return values
+		}
+	}
 }
 
 func updateButtons() {
-  TextManager.ClearStaticText()
+	TextManager.ClearStaticText()
 
-  var text string
+	var text string
 
-  correctButton := int(rand.Int63n(6)) + 1
-  AnswerVariations := GenerateVariationList()
+	correctButton := int(rand.Int63n(6)) + 1
+	AnswerVariations := GenerateVariationList()
 
+	for i := 1; i <= 6; i++ {
+		x := Spacing*float64(i%3) + WIDTH/5
+		y := Spacing*float64(i%2) + HEIGHT - HEIGHT/3
 
-  for i := 1; i <= 6; i++ {
-    x := Spacing*float64(i%3) + WIDTH/5
-    y := Spacing*float64(i%2) + HEIGHT - HEIGHT/3
+		if i == correctButton {
+			text = fmt.Sprint(answer)
 
-    if i == correctButton {
-      text = fmt.Sprint(answer)
+			ButtonManager.AddButton(fmt.Sprint(i), x, y, BSize, BSize, "nil",
+				func(button *Utils.Button, status int) {
+					if status == Utils.Tap {
+						answered = true
+						tries = 0
+					}
+				})
+		} else {
+			text = fmt.Sprint(answer + AnswerVariations[i])
 
-      ButtonManager.AddButton(fmt.Sprint(i), x, y, BSize, BSize, "nil",
-        func(button *Utils.Button, status int) {
-          if status == Utils.Tap {
-            answered = true
-            tries = 0
-          }
-        })
-    } else {
-       text = fmt.Sprint(answer + AnswerVariations[i])
+			ButtonManager.AddButton(fmt.Sprint(i), x, y, BSize, BSize, "nil",
+				func(button *Utils.Button, status int) {
+					if status == Utils.Tap {
+						button.Img.Fill(color.RGBA{255, 0, 0, 255})
+						tries++
+					}
+				})
+		}
 
-      ButtonManager.AddButton(fmt.Sprint(i), x, y, BSize, BSize, "nil",
-        func(button *Utils.Button, status int) {
-          if status == Utils.Tap {
-            button.Img.Fill(color.RGBA{255, 0, 0, 255})
-            tries++
-          }
-        })
-    }
+		TextManager.RenderTextTo("answer", text, int(x+BSize/2), int(y+BSize/2+BSize/6), ButtonText, TextManager.StaticTextImage)
 
-    if len(text) > 1 {
-      TextManager.RenderTextTo("answer", text, int(x+BSize/4), int(y+BSize*0.7-2), ButtonText, TextManager.StaticTextImage)
-    } else {
-      TextManager.RenderTextTo("answer", text, int(x+BSize/4+5), int(y+BSize*0.7-2), ButtonText, TextManager.StaticTextImage)
-    }
-
-    ButtonManager.GetButton(fmt.Sprint(i)).Img.Fill(ButtonBackground)
-  }
+		ButtonManager.GetButton(fmt.Sprint(i)).Img.Fill(ButtonBackground)
+	}
 }
 
-func RenderQuestionsList(screen *ebiten.Image) {
-  colour := color.RGBA{}
+func RenderQuestionsList(screen *ebiten.Image, x, y float64) {
+	colour := color.RGBA{}
 
-  for i := 0; i < len(QuestionsAnswered); i++ {
-    if QuestionsAnswered[i] {
-      colour = color.RGBA{0, 255, 0, 255}
-    } else {
-      colour = color.RGBA{255, 0, 0, 255}
-    }
-    ebitenutil.DrawRect(screen, float64(i*15)+5, 10, 10, 10, colour)
-  }
+	for i := 0; i < len(QuestionsAnswered); i++ {
+		if QuestionsAnswered[i] {
+			colour = color.RGBA{0, 255, 0, 255}
+		} else {
+			colour = color.RGBA{255, 0, 0, 255}
+		}
+		ebitenutil.DrawRect(screen, float64(i*40)+x, y, 30, 30, colour)
+	}
 }
 
 func update(screen *ebiten.Image) error {
 
-  screen.Fill(Background)
+	screen.Fill(Background)
 
-  if err := screen.DrawImage(ButtonManager.ButtonScreen, &ebiten.DrawImageOptions{}); err != nil {
-    log.Fatal(err)
-  }
+	if err := screen.DrawImage(ButtonManager.ButtonScreen, &ebiten.DrawImageOptions{}); err != nil {
+		log.Fatal(err)
+	}
 
-  TextManager.RenderStaticText(screen)
-  ButtonManager.CheckForPress(TouchManager.GetTouchPosition(0))
+	TextManager.RenderStaticText(screen)
 
-  LevelManager.RunLevel(screen)
+	//ButtonManager.CheckForPress(TouchManager.GetTouchPosition(0))
 
-  return nil
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+		x, y := ebiten.CursorPosition()
+		ButtonManager.CheckForPress(x, y, 1)
+	} else {
+		ButtonManager.CheckForPress(0, 0, 0)
+	}
+
+	LevelManager.RunLevel(screen)
+
+	return nil
 }
 
 
 func main() {
+	// Change the random generator seed so random numbers differ with every launch of the app
+	rand.Seed(time.Now().UnixNano())
 
-  LevelManager.SetLevel("main menu")
+	//Adding fonts
+	TextManager.AddFont("Roboto-Regular.ttf", "main", truetype.Options{
+		Size: 42,
+		DPI:  192,
+	})
 
-  // Change the random generator seed so random numbers differ with every launch of the app
-  rand.Seed(time.Now().UnixNano())
+	TextManager.AddFont("Roboto-Regular.ttf", "title", truetype.Options{
+		Size: 32,
+		DPI:  192,
+	})
 
-  //Adding fonts
-  TextManager.AddFont("Roboto-Regular.ttf", "main", truetype.Options{
-    Size: 54,
-    DPI: 72,
-  })
+	TextManager.AddFont("Roboto-Regular.ttf", "answer", truetype.Options{
+		Size: 18,
+		DPI:  192,
+	})
 
-  TextManager.AddFont("Roboto-Regular.ttf", "title", truetype.Options{
-    Size: 42,
-    DPI: 72,
-  })
+	TextManager.AddFont("Roboto-Regular.ttf", "level selection", truetype.Options{
+		Size: 24,
+		DPI:  192,
+	})
 
-  TextManager.AddFont("Roboto-Regular.ttf", "answer", truetype.Options{
-    Size: 24,
-    DPI: 72,
-  })
+	//Adding music/sounds
 
-  TextManager.AddFont("Roboto-Regular.ttf", "level selection", truetype.Options{
-    Size: 32,
-    DPI: 72,
-  })
+	//Adding question level to level Manager
+	LevelManager.AddLevel("main menu", menu)
+	LevelManager.AddLevel("level 0", level0)
+	LevelManager.AddLevel("level 1", level1)
+	LevelManager.AddLevel("level 2", level2)
+	LevelManager.AddLevel("end menu", endMenu)
 
-  //Adding music
+	LevelManager.SetLevel("main menu")
 
-  //Adding question level to level Manager
-  LevelManager.AddLevel("main menu", menu)
-  LevelManager.AddLevel("level 0", level0)
-  LevelManager.AddLevel("level 1", level1)
-  LevelManager.AddLevel("level 2", level2)
-  LevelManager.AddLevel("end menu", endMenu)
-
-  if err := ebiten.Run(update, WIDTH, HEIGHT, SCALE, "Test"); err != nil {
-    log.Fatal(err)
-  }
+	if err := ebiten.Run(update, WIDTH, HEIGHT, SCALE, "Test"); err != nil {
+		log.Fatal(err)
+	}
 }
