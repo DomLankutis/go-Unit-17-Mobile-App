@@ -211,14 +211,7 @@ func update(screen *ebiten.Image) error {
   }
 
   TextManager.RenderStaticText(screen)
-  //ButtonManager.CheckForPress(TouchManager.GetTouchPosition(0))
-
-  if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-    x, y := ebiten.CursorPosition()
-    ButtonManager.CheckForPress(x, y, Utils.Tap)
-  } else {
-    ButtonManager.CheckForPress(0, 0, Utils.Tap)
-  }
+  ButtonManager.CheckForPress(TouchManager.GetTouchPosition(0))
 
   LevelManager.RunLevel(screen)
 
