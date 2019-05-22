@@ -15,7 +15,7 @@ import (
 const (
   WIDTH = 720
   HEIGHT = 1280
-  SCALE = 0.5
+  SCALE = 1
 )
 
 const (
@@ -206,14 +206,7 @@ func update(screen *ebiten.Image) error {
 
 	TextManager.RenderStaticText(screen)
 
-	//ButtonManager.CheckForPress(TouchManager.GetTouchPosition(0))
-
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-		x, y := ebiten.CursorPosition()
-		ButtonManager.CheckForPress(x, y, 1)
-	} else {
-		ButtonManager.CheckForPress(0, 0, 0)
-	}
+	ButtonManager.CheckForPress(TouchManager.GetTouchPosition(0))
 
 	LevelManager.RunLevel(screen)
 
