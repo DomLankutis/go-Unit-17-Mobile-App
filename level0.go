@@ -5,5 +5,5 @@ import (
 )
 
 func level0 (screen *ebiten.Image) {
-	baseLevelLogic(screen)
+	baseLevelLogic(screen, 0)
 }
