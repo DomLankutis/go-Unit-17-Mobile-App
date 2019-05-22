@@ -38,6 +38,5 @@ func menu(screen *ebiten.Image) {
 		})
 		ButtonManager.GetButton("ToLevel2").Img.Fill(ButtonBackground)
 		TextManager.RenderTextTo("level selection", "Hard", WIDTH*0.4, HEIGHT*0.7+10, ButtonText, TextManager.StaticTextImage)
-
 	}
 }

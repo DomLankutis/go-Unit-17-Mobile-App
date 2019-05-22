@@ -15,7 +15,7 @@ import (
 const (
   WIDTH = 360
   HEIGHT = 640
-  SCALE = 2
+  SCALE = 1
 )
 
 const (
@@ -198,9 +198,6 @@ func RenderQuestionsList(screen *ebiten.Image) {
     } else {
       colour = color.RGBA{255, 0, 0, 255}
     }
-    if i == len(QuestionsAnswered)-1 {
-      colour = color.RGBA{250, 218, 94, 255}
-    }
     ebitenutil.DrawRect(screen, float64(i*15)+5, 10, 10, 10, colour)
   }
 }
@@ -251,7 +248,6 @@ func main() {
   })
 
   //Adding music
-  PlayerManager.NewAudioFromPath("annoyed3.wav", "sick")
 
   //Adding question level to level Manager
   LevelManager.AddLevel("main menu", menu)
