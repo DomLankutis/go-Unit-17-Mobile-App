@@ -42,7 +42,12 @@ func (f *TextManager) AddFont(path, name string, options truetype.Options) {
 
 
 func (f *TextManager) RenderTextTo(fontName, message string, x, y int, color color.RGBA, screen *ebiten.Image) {
-	text.Draw(screen, message, f.fonts[fontName], x, y, color)
+	var sub int
+	for _, letter := range message {
+		advancement, _ := f.fonts[fontName].GlyphAdvance(letter)
+		sub += int(int(advancement) >> 6)
+	}
+	text.Draw(screen, message, f.fonts[fontName], x-(sub/2), y, color)
 }
 
 func (f *TextManager) ClearStaticText() {
