@@ -88,7 +88,7 @@ func generateQuestion(max int64) (a, b, o, ans int64) {
   case SUB:
     return a, b, o, a - b
   case DIV:
-    if float64(a)/float64(b) == float64(a/b) {
+    if b != 0 && float64(a)/float64(b) == float64(a/b){
       return a, b, o, a / b
     } else {
       return generateQuestion(max)
@@ -115,7 +115,7 @@ func getSymbol(o int64) string {
   }
 }
 
-func GenerateVariatonList() []int64 {
+func GenerateVariationList() []int64 {
 
   var values []int64
 
@@ -127,7 +127,7 @@ func GenerateVariatonList() []int64 {
     value := n
 
     for _, val := range values {
-      if val == value || val == answer || value == 0 {
+      if value == answer || value == val ||  value == 0 {
         canAdd = false
         break
       }
@@ -150,7 +150,7 @@ func updateButtons() {
   var text string
 
   correctButton := int(rand.Int63n(6)) + 1
-  AnswerVariations := GenerateVariatonList()
+  AnswerVariations := GenerateVariationList()
 
 
   for i := 1; i <= 6; i++ {
@@ -168,7 +168,7 @@ func updateButtons() {
           }
         })
     } else {
-      text = fmt.Sprint(AnswerVariations[i])
+       text = fmt.Sprint(answer + AnswerVariations[i])
 
       ButtonManager.AddButton(fmt.Sprint(i), x, y, BSize, BSize, "nil",
         func(button *Utils.Button, status int) {
@@ -211,7 +211,14 @@ func update(screen *ebiten.Image) error {
   }
 
   TextManager.RenderStaticText(screen)
-  ButtonManager.CheckForPress(TouchManager.GetTouchPosition(0))
+  //ButtonManager.CheckForPress(TouchManager.GetTouchPosition(0))
+
+  if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+    x, y := ebiten.CursorPosition()
+    ButtonManager.CheckForPress(x, y, Utils.Tap)
+  } else {
+    ButtonManager.CheckForPress(0, 0, Utils.Tap)
+  }
 
   LevelManager.RunLevel(screen)
 
