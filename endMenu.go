@@ -19,7 +19,9 @@ var (
 
 func endMenu(screen *ebiten.Image) {
 	if LevelManager.NewState {
-		LevelTicker = time.Tick(time.Second/2)
+		TotalScore = 0
+
+		LevelTicker = time.Tick(time.Second/4)
 
 		for _, ans := range QuestionsAnswered {
 			if ans {
