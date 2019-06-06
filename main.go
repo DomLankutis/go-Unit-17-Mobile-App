@@ -15,7 +15,7 @@ import (
 const (
   WIDTH = 720
   HEIGHT = 1280
-  SCALE = 1
+  SCALE = 0.5
 )
 
 const (
@@ -35,6 +35,14 @@ var (
   ButtonText = color.RGBA{0, 0, 0, 255}
   ButtonBackground = color.RGBA{247,211,186, 255}
   Background = color.RGBA{245,239,227, 255}
+  Buttons = map[int]color.RGBA{
+	  1: {206, 106, 107, 255},
+	  2: {235, 172, 162, 255},
+	  3: {247, 211, 186, 255},
+	  4: {190, 211, 195, 255},
+	  5: {74, 145, 158, 255},
+	  6: {33, 46, 83, 255},
+  }
 )
 
 var (
@@ -107,9 +115,9 @@ func getSymbol(o int64) string {
 	case SUB:
 		return " - "
 	case DIV:
-		return " / "
+		return " ÷ "
 	case MUL:
-		return " * "
+		return " x "
 	default:
 		return " "
 	}
@@ -179,7 +187,7 @@ func updateButtons() {
 
 		TextManager.RenderTextTo("answer", text, int(x+BSize/2), int(y+BSize/2+BSize/6), ButtonText, TextManager.StaticTextImage)
 
-		ButtonManager.GetButton(fmt.Sprint(i)).Img.Fill(ButtonBackground)
+		ButtonManager.GetButton(fmt.Sprint(i)).Img.Fill(Buttons[i])
 	}
 }
 
@@ -196,6 +204,8 @@ func RenderQuestionsList(screen *ebiten.Image, x, y float64) {
 	}
 }
 
+var (down = false)
+
 func update(screen *ebiten.Image) error {
 
 	screen.Fill(Background)
@@ -206,6 +216,19 @@ func update(screen *ebiten.Image) error {
 
 	TextManager.RenderStaticText(screen)
 	ButtonManager.CheckForPress(TouchManager.GetTouchPosition(0))
+
+	///////
+	// 	Uncomment for mouse support. (Hold state will not work, only tap state will work)
+	///////
+	//x, y := ebiten.CursorPosition()
+	//ButtonManager.CheckForPress(0, 0, 0)
+	//if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+	//	down = true
+	//} else if down{
+	//	down = false
+	//	ButtonManager.CheckForPress(x, y, 1)
+	//}
+	///////
 
 	LevelManager.RunLevel(screen)
 
